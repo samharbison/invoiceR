@@ -1,0 +1,66 @@
+---
+title: "`r params$set_title`"   
+date: "`r Sys.Date()`"
+author: "Sam Harbison"
+output: html_document
+params: 
+  set_title: NA
+  to: NA
+  from: 
+  tab: NA
+  
+header-includes:
+- \usepackage{booktabs}
+- \usepackage{longtable}
+- \usepackage{array}
+- \usepackage{multirow}
+- \usepackage{wrapfig}
+- \usepackage{float}
+- \usepackage{colortbl}
+- \usepackage{pdflscape}
+- \usepackage{tabu}
+- \usepackage{threeparttable}
+- \usepackage{threeparttablex}
+- \usepackage[normalem]{ulem}
+- \usepackage{makecell}
+- \usepackage{xcolor}
+  
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+library(kableExtra)
+library(tidyverse)
+library(DT)
+options(knitr.kable.NA = '')
+
+```
+
+## Invoice To:
+```{r results="asis", echo = F}
+cat(gsub("\n", "  \n",params$to))
+```
+
+## From: 
+
+```{r results="asis", echo = F}
+cat(gsub("\n", "  \n",params$from))
+```
+
+
+```{r, echo = FALSE}
+#kable(params$tab, "latex", booktabs = T) %>% 
+kable(params$tab %>% mutate(Total = dollar(.$Total))) %>% 
+  kable_styling(full_width = T) %>% 
+  row_spec(0,extra_css = "background: #3D3F3D; color: #f5f5f5;") %>% 
+  column_spec(1, width= '5em') %>% 
+  column_spec(2, width= '10em') %>% 
+  column_spec(3, width= '17em') %>% 
+  column_spec(4, width = "2em") %>% 
+  column_spec(5, width = "2em") %>% 
+  column_spec(6, width = "2em") %>% 
+  kableExtra::group_rows("Totals", start_row= nrow(params$tab), end_row = nrow(params$tab), label_row_css = "background: #3D3F3D; color: #f5f5f5;")
+  #pack_rows(index=c(" "= length(1:(nrow(params$tab)-1)), "Total" = 1)) %>% 
+  #row_spec(nrow(params$tab), bold = T, color="red")
+```
+
